@@ -89,7 +89,7 @@ module.exports = {
                         var token = jwt.sign({ id, email, role }, privateKey, {
                             expiresIn: '1d'
                         })
-                        console.log(token)
+                        //console.log(token)
                         return response.status(200).json({
                             token
                         })

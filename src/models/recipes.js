@@ -17,7 +17,7 @@ const DataSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    id: {
+    userId: {
         type: String,
         required: false
     }

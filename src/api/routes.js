@@ -15,6 +15,10 @@ routes.post('/login', [body('email').isEmail()], user.login)
 
 // Rotas do recipes
 routes.post('/recipes', validarToken, recipes.create)
+routes.get('/recipes', recipes.listagem)
+routes.get('/recipes/:id', recipes.listarId)
+routes.put('/recipes/:id', recipes.editarReceita)
+
 
 
 module.exports = routes

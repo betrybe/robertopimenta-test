@@ -3,8 +3,7 @@ const {promisify} = require('util')
 
 module.exports = {
     async validarToken(request, response, next) {
-        const auth = request.headers.authorization
-        const [, token] = auth.split(' ')
+        const token = request.headers.authorization
         if (!token) {
             return response.status(400).json({
                 message: 'Necessário realizar login'
@@ -12,16 +11,8 @@ module.exports = {
         } else {
             try{
                 var privateKey = 'eb8ea89321237f7b4520'
-                const decode = await promisify(jwt.verify)(token, privateKey)
-                //console.log(decode)
-                var userId = decode.id
-                var userEmail = decode.email
-                var userRole = decode.role
-                //console.log(userId)
-                //console.log(userEmail)
-                //console.log(userRole)
-                return next()
-                
+                await promisify(jwt.verify)(token, privateKey)
+                return next()   
             }catch(err){
                 return response.status(400).json({
                     message: 'Login ou senha inválido'
