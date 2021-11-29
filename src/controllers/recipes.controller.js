@@ -1,6 +1,7 @@
 const recipes = require('../models/recipes')
 const jwt = require('jsonwebtoken')
 const { promisify } = require('util')
+const { nextTick } = require('process')
 
 module.exports = {
     index(request, response) {
@@ -70,22 +71,59 @@ module.exports = {
     async listarId(request, response) {
         const id = request.params.id
         //console.log(id)
-        await recipes.findById(id).then((receita) => {
-            return response.status(200).json({
-                receita
-            })
-        }).catch(()=>{
+        await recipes.findById(id).then((resultado) => {
+            receita = resultado
+        }).catch(() => {
             return response.status(404).json({
                 message: 'recipe not found'
             })
         })
-        
     },
 
     async editarReceita(request, response) {
-        return response.status(200).json({
-            message: 'Editar receitas'
-        })
+        // Verifico token
+        const token = request.headers.authorization
+        if (!token) {
+            return response.status(401).json({
+                message: 'missing auth token'
+            })
+        } else {
+            try {
+                var privateKey = 'eb8ea89321237f7b4520'
+                var dados = await promisify(jwt.verify)(token, privateKey)
+            } catch (err) {
+                return response.status(401).json({
+                    message: 'jwt malformed'
+                })
+            }
+        }
+        // Procuro receita
+        const id = request.params.id
+        try {
+            var receita = await recipes.findById(id)
+        } catch (err) {
+            return response.status(404).json({
+                message: 'recipe not found'
+            })
+        }
+        
+        // verifico id do usuário logado com o userId da receita
+        if (dados.id === receita.userId || dados.role === 'admin') {
+            const update = request.body
+            await recipes.findByIdAndUpdate(id, update).then((receitaUpdate) => {
+                return response.status(200).json({
+                    receitaUpdate
+                })
+            }).catch((err) => {
+                return response.status(400).json({
+                    err
+                })
+            })
+        } else {
+            return response.status(401).json({
+                message: 'error user'
+            })
+        }
     }
 
 
