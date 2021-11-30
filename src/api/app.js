@@ -18,6 +18,8 @@ app.use((request, response, next) => {
 app.use(cookieParser())
 app.use(express.json())
 app.use(routes)
+app.use(express.static('src')); 
+app.use('/uploads', express.static('uploads'));
 
 // Não remover esse end-point, ele é necessário para o avaliador
 app.get('/', (request, response) => {

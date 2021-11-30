@@ -1,7 +1,6 @@
 const recipes = require('../models/recipes')
 const jwt = require('jsonwebtoken')
 const { promisify } = require('util')
-const { nextTick } = require('process')
 
 module.exports = {
     index(request, response) {
@@ -10,6 +9,7 @@ module.exports = {
         })
     },
 
+    // CADASTRAR RECEITA
     async create(request, response) {
         const { name, ingredients, preparation } = request.body
 
@@ -37,51 +37,57 @@ module.exports = {
                     } else {
                         try {
                             var privateKey = 'eb8ea89321237f7b4520'
-                            const decode = await promisify(jwt.verify)(token, privateKey)
+                            var decode = await promisify(jwt.verify)(token, privateKey)
                             //console.log(decode)
-                            var userId = decode.id
-                            const data = { name, ingredients, preparation, userId }
-                            const receita = await recipes.create(data)
-                            return response.status(201).json({
-                                receita
-                            })
                         } catch (err) {
                             return response.status(401).json({
                                 message: 'jwt malformed'
                             })
                         }
+                        var userId = decode.id
+                        var image = ''
+                        const data = { name, ingredients, preparation, userId, image }
+                        const recipe = await recipes.create(data)
+                        return response.status(201).json({
+                            recipe
+                        })
                     }
                 }
             }
         }
     },
 
+    // LISTAR TODAS AS RECEITAS
     async listagem(request, response) {
-        await recipes.find({}).then((receitas) => {
+        try {
+            var recipes = await recipes.find()
             return response.status(200).json({
-                receitas
+                recipes
             })
-        }).catch((err) => {
-            return response.status(400).json({
-                err
-            })
-        })
-    },
-
-    async listarId(request, response) {
-        const id = request.params.id
-        //console.log(id)
-        await recipes.findById(id).then((receita) => {
-            return response.status(200).json({
-                receita
-            })
-        }).catch(() => {
+        }catch (err){
             return response.status(404).json({
                 message: 'recipe not found'
             })
-        })
+        }
     },
 
+    // LISTAR RECEITA PELO ID
+    async listarId(request, response) {
+        const id = request.params.id
+        //console.log(id)
+        try {
+            var receita = await recipes.findById(id)
+            return response.status(200).json({
+                receita
+            })
+        }catch (err){
+            return response.status(404).json({
+                message: 'recipe not found'
+            })
+        }
+    },
+
+    // EDITAR RECEITA
     async editarReceita(request, response) {
         // Verifico token
         const token = request.headers.authorization
@@ -128,7 +134,53 @@ module.exports = {
         }
     },
 
+    // DELETAR RECEITA
     async deletarReceita(request, response) {
+        // Verifico token
+        const token = request.headers.authorization
+        if (!token) {
+            return response.status(401).json({
+                message: 'missing auth token'
+            })
+        } else {
+            try {
+                var privateKey = 'eb8ea89321237f7b4520'
+                var dados = await promisify(jwt.verify)(token, privateKey)
+            } catch (err) {
+                return response.status(401).json({
+                    message: 'jwt malformed'
+                })
+            }
+        }
+
+        // Procuro receita
+        const id = request.params.id
+        try {
+            var receita = await recipes.findById(id)
+        } catch (err) {
+            return response.status(404).json({
+                message: 'recipe not found'
+            })
+        }
+
+        // verifico id do usuário logado com o userId da receita ou role admin
+        if (dados.id === receita.userId || dados.role === 'admin') {
+            await recipes.findOneAndDelete(id).then(() => {
+                return response.status(204).json()
+            }).catch((err) => {
+                return response.status(400).json({
+                    err
+                })
+            })
+        } else {
+            return response.status(401).json({
+                message: 'error user'
+            })
+        }
+    },
+
+    // ADICIONAR ROTA DA IMAGEM NA RECEITA
+    async imagemReceita(request, response) {
         // Verifico token
         const token = request.headers.authorization
         if (!token) {
@@ -158,8 +210,11 @@ module.exports = {
         
         // verifico id do usuário logado com o userId da receita ou role admin
         if (dados.id === receita.userId || dados.role === 'admin') {
-            await recipes.findOneAndDelete(id).then(() => {
-                return response.status(204).json()
+            var update = { image: 'http:/localhost:3000/src/uploads/' + id + '.jpeg'}
+            await recipes.findByIdAndUpdate(id, update).then((receitaUpdate) => {
+                return response.status(200).json({
+                    receitaUpdate
+                })
             }).catch((err) => {
                 return response.status(400).json({
                     err
@@ -170,8 +225,6 @@ module.exports = {
                 message: 'error user'
             })
         }
-
-        
     }
 
 }

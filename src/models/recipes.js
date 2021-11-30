@@ -13,11 +13,11 @@ const DataSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    url: {
+    userId: {
         type: String,
         required: false
     },
-    userId: {
+    image: {
         type: String,
         required: false
     }

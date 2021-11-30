@@ -40,7 +40,8 @@ module.exports = {
                             let role = "user"
                             let data = {}
                             data = { name, email, password, role }
-                            user = await users.create(data)
+                            user = {name, email, role}
+                            await users.create(data)
                             return response.status(201).json({
                                 user
                             })
