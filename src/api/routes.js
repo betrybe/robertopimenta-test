@@ -2,7 +2,6 @@ const express = require('express')
 const { body } = require('express-validator');
 
 // middle
-const {validarToken} = require('../middlewares/validarToken')
 const upload = require('../middlewares/upload')
 
 const routes = express.Router()
@@ -22,13 +21,9 @@ routes.get('/recipes', recipes.listagem)
 routes.get('/recipes/:id', recipes.listarId)
 routes.put('/recipes/:id', recipes.editarReceita)
 routes.delete('/recipes/:id', recipes.deletarReceita)
-routes.put('/recipes/:id/image', upload.single('image'), recipes.imagemReceita)
+routes.put('/recipes/:id/image/', upload.single('image'), recipes.imagemReceita)
 
 // Rota para uma imagem
 routes.get('/images/:id', images.listarImagem)
-
-
-
-
 
 module.exports = routes

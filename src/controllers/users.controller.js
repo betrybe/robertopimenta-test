@@ -1,6 +1,7 @@
 const users = require('../models/users')
 const { validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken')
+var mongoose = require('mongoose');
 
 module.exports = {
     index(request, response) {
@@ -84,7 +85,8 @@ module.exports = {
                             message: 'Incorrect username or password'
                         })
                     } else {
-                        var id = user._id
+                        var id = mongoose.mongo.ObjectId(user._id).toString()
+                        //console.log(id)
                         var role = user.role
                         var privateKey = 'eb8ea89321237f7b4520'
                         var token = jwt.sign({ id, email, role }, privateKey, {

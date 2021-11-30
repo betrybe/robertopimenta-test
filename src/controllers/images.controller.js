@@ -1,4 +1,5 @@
 const recipes = require('../models/recipes')
+const fetch = require("node-fetch")
 
 module.exports = {
     index(request, response) {
@@ -9,9 +10,13 @@ module.exports = {
 
     async listarImagem(request, response) {
         const id = request.params.id
-        //var endImagem = 'http://localhost:3000/uploads/' + id
-        return response.status(200).json(
-            'http://localhost:3000/uploads/' + id
-            )
+        const urlImg = 'http://localhost:3000/uploads/' + id
+        const reposta = await fetch(urlImg);
+
+        response.writeHead(200,{
+            "content-type": "image/jpeg",
+        })
+
+        return reposta.body.pipe(response);
     }
 }

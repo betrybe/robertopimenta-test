@@ -38,7 +38,6 @@ module.exports = {
                         try {
                             var privateKey = 'eb8ea89321237f7b4520'
                             var decode = await promisify(jwt.verify)(token, privateKey)
-                            //console.log(decode)
                         } catch (err) {
                             return response.status(401).json({
                                 message: 'jwt malformed'
@@ -59,16 +58,16 @@ module.exports = {
 
     // LISTAR TODAS AS RECEITAS
     async listagem(request, response) {
-        try {
-            var recipes = await recipes.find()
-            return response.status(200).json({
+        await recipes.find().then((recipes) => {
+            return response.status(200).json(
                 recipes
+            )
+        }).catch((err) => {
+            return response.status(400).json({
+                err
             })
-        }catch (err){
-            return response.status(404).json({
-                message: 'recipe not found'
-            })
-        }
+        })
+
     },
 
     // LISTAR RECEITA PELO ID
@@ -76,11 +75,11 @@ module.exports = {
         const id = request.params.id
         //console.log(id)
         try {
-            var receita = await recipes.findById(id)
-            return response.status(200).json({
+            const receita = await recipes.findById(id)
+            return response.status(200).json(
                 receita
-            })
-        }catch (err){
+            )
+        } catch (err) {
             return response.status(404).json({
                 message: 'recipe not found'
             })
@@ -105,7 +104,8 @@ module.exports = {
                 })
             }
         }
-        // Procuro receita
+
+        // Procuro a receita
         const id = request.params.id
         try {
             var receita = await recipes.findById(id)
@@ -117,16 +117,13 @@ module.exports = {
 
         // verifico id do usuário logado com o userId da receita ou role admin
         if (dados.id === receita.userId || dados.role === 'admin') {
-            const update = request.body
-            await recipes.findByIdAndUpdate(id, update).then((receitaUpdate) => {
-                return response.status(200).json({
-                    receitaUpdate
-                })
-            }).catch((err) => {
-                return response.status(400).json({
-                    err
-                })
-            })
+            var userId = receita.userId
+            const { name, ingredients, preparation } = request.body
+            const update = { userId, name, ingredients, preparation }
+            var receitaUpdate = await recipes.findOneAndUpdate(id, update, { new: true })
+            return response.status(200).json(
+                receitaUpdate
+            )
         } else {
             return response.status(401).json({
                 message: 'error user'
@@ -179,7 +176,7 @@ module.exports = {
         }
     },
 
-    // ADICIONAR ROTA DA IMAGEM NA RECEITA
+    // ADICIONAR IMAGEM NA RECEITA
     async imagemReceita(request, response) {
         // Verifico token
         const token = request.headers.authorization
@@ -198,7 +195,7 @@ module.exports = {
             }
         }
 
-        // Procuro receita
+        // Procuro a receita
         const id = request.params.id
         try {
             var receita = await recipes.findById(id)
@@ -207,14 +204,15 @@ module.exports = {
                 message: 'recipe not found'
             })
         }
-        
+
         // verifico id do usuário logado com o userId da receita ou role admin
         if (dados.id === receita.userId || dados.role === 'admin') {
-            var update = { image: 'http:/localhost:3000/src/uploads/' + id + '.jpeg'}
-            await recipes.findByIdAndUpdate(id, update).then((receitaUpdate) => {
-                return response.status(200).json({
+            var userId = receita.userId
+            var update = { userId, image: 'localhost:3000/src/uploads/' + id + '.jpeg' }
+            await recipes.findOneAndUpdate(id, update, { new: true }).then((receitaUpdate) => {
+                return response.status(200).json(
                     receitaUpdate
-                })
+                )
             }).catch((err) => {
                 return response.status(400).json({
                     err
