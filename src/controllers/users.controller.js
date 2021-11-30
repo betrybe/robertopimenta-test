@@ -2,6 +2,7 @@ const users = require('../models/users')
 const { validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken')
 var mongoose = require('mongoose');
+const { promisify } = require('util')
 
 module.exports = {
     index(request, response) {
@@ -41,7 +42,7 @@ module.exports = {
                             let role = "user"
                             let data = {}
                             data = { name, email, password, role }
-                            user = {name, email, role}
+                            user = { name, email, role }
                             await users.create(data)
                             return response.status(201).json({
                                 user
@@ -100,6 +101,45 @@ module.exports = {
                 }
             }
         }
+    },
+
+    async createAdmin(request, response) {
+        // Verifico token
+        const token = request.headers.authorization
+        if (!token) {
+            return response.status(401).json({
+                message: 'missing auth token'
+            })
+        } else {
+            try {
+                var privateKey = 'eb8ea89321237f7b4520'
+                var dados = await promisify(jwt.verify)(token, privateKey)
+            } catch (err) {
+                return response.status(401).json({
+                    message: 'jwt malformed'
+                })
+            }
+        }
+        if (dados.role === 'admin') {
+            const { name, email, password } = request.body
+            const role = 'admin'
+            const data = { name, email, password, role }
+            await users.create(data).then((user) => {
+                return response.status(201).json({
+                    user
+                })
+            }).catch(() => {
+                return response.status(400).json({
+                    message: 'erro ao cadastrar admin'
+                })
+            })
+        }else{
+            return response.status(403).json({
+                message: 'Only admins can register new admins'
+            })
+        }
+
+
     }
 
 }

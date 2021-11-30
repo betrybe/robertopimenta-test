@@ -26,4 +26,7 @@ routes.put('/recipes/:id/image/', upload.single('image'), recipes.imagemReceita)
 // Rota para uma imagem
 routes.get('/images/:id', images.listarImagem)
 
+// Rota para cadastro de adms
+routes.post('/users/admin', user.createAdmin)
+
 module.exports = routes
