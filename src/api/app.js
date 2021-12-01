@@ -3,6 +3,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const routes = require('./routes');
 
 const app = express();
 
@@ -25,6 +26,8 @@ app.use((request, response, next) => {
   app.use(cors());
   next();
 });
+
+app.use(routes);
 
 app.use('/images', express.static(path.join(__dirname, '..', 'uploads')));
 
