@@ -36,21 +36,27 @@ module.exports = {
                             message: 'Invalid entries. Try again.'
                         })
                     } else {
-                        let user = await users.findOne({ email })
-                        // verifica email já cadastrado
-                        if (!user) {
-                            let role = "user"
-                            let data = {}
-                            data = { name, email, password, role }
-                            user = { name, email, role }
-                            await users.create(data)
-                            return response.status(201).json({
-                                user
+                        if (password.length < 8) {
+                            return response.status(400).json({
+                                message: 'Invalid entries. Try again.'
                             })
                         } else {
-                            return response.status(409).json({
-                                message: 'Email already registered'
-                            })
+                            let user = await users.findOne({ email })
+                            // verifica email já cadastrado
+                            if (!user) {
+                                let role = "user"
+                                let data = {}
+                                data = { name, email, password, role }
+                                user = { name, email, role }
+                                await users.create(data)
+                                return response.status(201).json({
+                                    user
+                                })
+                            } else {
+                                return response.status(409).json({
+                                    message: 'Email already registered'
+                                })
+                            }
                         }
                     }
                 }
@@ -121,24 +127,57 @@ module.exports = {
             }
         }
         if (dados.role === 'admin') {
+            const errors = validationResult(request);
+
             const { name, email, password } = request.body
-            const role = 'admin'
-            const data = { name, email, password, role }
-            await users.create(data).then((user) => {
-                return response.status(201).json({
-                    user
-                })
-            }).catch(() => {
+            if (!name) {
                 return response.status(400).json({
-                    message: 'erro ao cadastrar admin'
+                    message: 'Invalid entries. Try again.'
                 })
-            })
-        }else{
+            } else {
+                if (!email) {
+                    return response.status(400).json({
+                        message: 'Invalid entries. Try again.'
+                    })
+                } else {
+                    if (!errors.isEmpty()) {
+                        return response.status(400).json({
+                            message: 'Invalid entries. Try again.'
+                        })
+                    } else {
+                        if (!password) {
+                            return response.status(400).json({
+                                message: 'Invalid entries. Try again.'
+                            })
+                        } else {
+                            let user = await users.findOne({ email })
+                            if (!user) {
+                                const role = 'admin'
+                                const data = { name, email, password, role }
+                                await users.create(data).then((user) => {
+                                    return response.status(201).json({
+                                        user
+                                    })
+                                }).catch(() => {
+                                    return response.status(400).json({
+                                        message: 'erro ao cadastrar admin'
+                                    })
+                                })
+                            } else {
+                                return response.status(409).json({
+                                    message: 'Email already registered'
+                                })
+                            }
+
+                        }
+                    }
+                }
+            }
+        } else {
             return response.status(403).json({
                 message: 'Only admins can register new admins'
             })
         }
-
 
     }
 

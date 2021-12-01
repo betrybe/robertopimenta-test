@@ -1,10 +1,10 @@
 const express = require('express')
+const routes = express.Router()
 const { body } = require('express-validator');
 
 // middle
+//const validarToken = require('../middlewares/validarToken')
 const upload = require('../middlewares/upload')
-
-const routes = express.Router()
 
 //controllers
 const user = require('../controllers/users.controller')
