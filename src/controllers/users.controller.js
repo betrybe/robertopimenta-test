@@ -13,14 +13,14 @@ module.exports = {
         if (!errors.isEmpty() || !name || !email || !password) {
             return response.status(400).json({ message: 'Invalid entries. Try again.' });
         }
-        let user = await users.findOne({ email });
-        if (!user) {
-            const role = 'user';
-            const data = { name, email, password, role };
-            await users.create(data);
-            user = { name, email, role };
-            return response.status(201).json({ user });
-        }
-        return response.status(409).json({ message: 'Email already registered' });
+        await users.findOne({ email }).then((dados) => {
+            if (!dados) {
+                const role = 'user';
+                users.create({ name, email, password, role });
+                const user = { name, email, role };
+                return response.status(201).json({ user });
+            }
+            return response.status(409).json({ message: 'Email already registered' });
+        });
     },
 };
