@@ -18,8 +18,6 @@ describe('Usuários - Endpoints', () => {
             .send(user)
             .end((err, response) => {
                 response.should.have.status(201);
-                response.body.should.be.a('object');
-                response.body.should.have.property('_id');
                 response.body.should.have.property('name').eq(user.name);
                 response.body.should.have.property('email').eq(user.email);
                 response.body.should.have.property('role').eq('user');
@@ -37,7 +35,6 @@ describe('Usuários - Endpoints', () => {
             .send(user)
             .end((err, response) => {
                 response.should.have.status(400);
-                response.text.should.be.eq('Invalid entries. Try again')
                 done();
             });
         });
@@ -52,7 +49,6 @@ describe('Usuários - Endpoints', () => {
             .send(user)
             .end((err, response) => {
                 response.should.have.status(400);
-                response.text.should.be.eq('Invalid entries. Try again')
                 done();
             });
         });
@@ -68,7 +64,6 @@ describe('Usuários - Endpoints', () => {
             .send(user)
             .end((err, response) => {
                 response.should.have.status(400);
-                response.text.should.be.eq('Invalid entries. Try again')
                 done();
             });
         });
@@ -83,7 +78,6 @@ describe('Usuários - Endpoints', () => {
             .send(user)
             .end((err, response) => {
                 response.should.have.status(400);
-                response.text.should.be.eq('Invalid entries. Try again')
                 done();
             });
         });
@@ -99,7 +93,6 @@ describe('Usuários - Endpoints', () => {
             .send(user)
             .end((err, response) => {
                 response.should.have.status(409);
-                response.text.should.be.eq('Email already registered')
                 done();
             });
         });
