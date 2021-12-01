@@ -7,7 +7,7 @@ main().then(() => {
 })
 
 async function main() {
-  await mongoose.connect('mongodb://localhost:27017/Cookmaster', {
+  await mongoose.connect('mongodb://mongodb:27017/Cookmaster', {
     useUnifiedTopology: true,
     useNewUrlParser: true
   });
