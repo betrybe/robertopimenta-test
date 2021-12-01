@@ -32,7 +32,6 @@ describe('Login - Endpoints', () => {
             .send(user)
             .end((err, response) => {
                 response.should.have.status(401);
-                response.text.should.be.eq('All fields must be filled')
                 done();
             });
         });
@@ -46,7 +45,6 @@ describe('Login - Endpoints', () => {
             .send(user)
             .end((err, response) => {
                 response.should.have.status(401);
-                response.text.should.be.eq('All fields must be filled')
                 done();
             });
         });
@@ -61,7 +59,6 @@ describe('Login - Endpoints', () => {
             .send(user)
             .end((err, response) => {
                 response.should.have.status(401);
-                response.text.should.be.eq('Incorrect username or password')
                 done();
             });
         });
@@ -76,7 +73,6 @@ describe('Login - Endpoints', () => {
             .send(user)
             .end((err, response) => {
                 response.should.have.status(401);
-                response.text.should.be.eq('Incorrect username or password')
                 done();
             });
         });
