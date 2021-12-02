@@ -11,5 +11,6 @@ routes.post('/login', [body('email').isEmail()], user.login);
 
 routes.post('/recipes', recipes.create);
 routes.get('/recipes', recipes.listagem);
+routes.get('/recipes/:id', recipes.listarId);
 
 module.exports = routes;

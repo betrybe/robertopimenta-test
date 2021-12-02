@@ -25,6 +25,17 @@ module.exports = {
     },
     async listagem(request, response) {
         await recipes.find().then((receitas) => response.status(200).json(receitas))
-        .catch((err) => response.status(400).json(err));
+            .catch((err) => response.status(400).json(err));
+    },
+    async listarId(request, response) {
+        const { id } = request.params.id;
+        try {
+            const receita = await recipes.findById(id);
+            return response.status(200).json(receita);
+        } catch (err) {
+            return response.status(404).json({
+                message: 'recipe not found',
+            });
+        }
     },
 };
