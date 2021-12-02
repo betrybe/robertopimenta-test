@@ -88,7 +88,7 @@ module.exports = {
             const { userId } = receita;
             const update = { 
                 userId, 
-                image: `localhost:3000/src/uploads/, ${request.params.id}, .jpeg`,
+                image: `localhost:3000/src/uploads/${request.params.id}.jpeg`,
             };
             await recipes.findOneAndUpdate(request.params.id, update, { new: true })
                 .then((receitaUpdate) => response.status(200).json(receitaUpdate))

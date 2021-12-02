@@ -6,7 +6,7 @@ module.exports = (multer({
             cb(null, './src/uploads');
         },
         filename: (request, file, cb) => {
-            cb(null, `${request.params.id}, .jpeg`);
+            cb(null, `${request.params.id} .jpeg`);
         },
     }),
 }));
