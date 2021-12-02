@@ -10,5 +10,6 @@ routes.post('/users', [body('email').isEmail()], user.create);
 routes.post('/login', [body('email').isEmail()], user.login);
 
 routes.post('/recipes', recipes.create);
+routes.get('/recipes', recipes.listagem);
 
 module.exports = routes;

@@ -23,4 +23,8 @@ module.exports = {
             recipes.create(data).then((recipe) => response.status(201).json({ recipe }));
         }).catch(() => response.status(401).json({ message: 'jwt malformed' }));
     },
+    async listagem(request, response) {
+        await recipes.find().then((receitas) => response.status(200).json(receitas))
+        .catch((err) => response.status(400).json(err));
+    },
 };
