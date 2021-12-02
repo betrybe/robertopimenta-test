@@ -39,4 +39,24 @@ module.exports = {
             });
         }
     },
+    async editarReceita(request, response) {
+        const token = request.headers.authorization;
+        const { name, ingredients, preparation } = request.body;
+        let dados = ''; let receita = ''; let userId = ''; let receitaUpdate = '';
+        if (!token) { return response.status(401).json({ message: 'missing auth token' }); }
+        try {
+            dados = await promisify(jwt.verify)(token, 'eb8ea89321237f7b4520');
+        } catch (err) {
+            return response.status(401).json({ message: 'jwt malformed' });
+        }
+        receita = await recipes.findById(request.params.id);
+        if (dados.id === receita.userId || dados.role === 'admin') {
+            userId = receita.userId;
+            const update = { userId, name, ingredients, preparation };
+            receitaUpdate = await recipes.findOneAndUpdate(request.params.id, update, {
+                new: true,
+            });
+            return response.status(200).json(receitaUpdate);
+        }
+    },
 };
