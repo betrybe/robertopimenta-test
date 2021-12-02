@@ -71,8 +71,28 @@ module.exports = {
         receita = await recipes.findById(request.params.id);
         if (dados.id === receita.userId || dados.role === 'admin') {
             await recipes.findOneAndDelete(request.params.id)
-            .then(() => response.status(204).json())
-            .catch(() => response.status(204).json());
+                .then(() => response.status(204).json())
+                .catch(() => response.status(204).json());
+        }
+    },
+    async imagemReceita(request, response) {
+        const token = request.headers.authorization; let dados = ''; let receita = '';
+        if (!token) { return response.status(401).json({ message: 'missing auth token' }); }
+        try {
+            dados = await promisify(jwt.verify)(token, 'eb8ea89321237f7b4520');
+        } catch (err) {
+            return response.status(401).json({ message: 'jwt malformed' });
+        }
+        receita = await recipes.findById(request.params.id);
+        if (dados.id === receita.userId || dados.role === 'admin') {
+            const { userId } = receita;
+            const update = { 
+                userId, 
+                image: `localhost:3000/src/uploads/, ${request.params.id}, .jpeg`,
+            };
+            await recipes.findOneAndUpdate(request.params.id, update, { new: true })
+                .then((receitaUpdate) => response.status(200).json(receitaUpdate))
+                .catch((err) => response.status(400).json({ err }));
         }
     },
 };
