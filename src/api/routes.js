@@ -13,5 +13,6 @@ routes.post('/recipes', recipes.create);
 routes.get('/recipes', recipes.listagem);
 routes.get('/recipes/:id', recipes.listarId);
 routes.put('/recipes/:id', recipes.editarReceita);
+routes.delete('/recipes/:id', recipes.deletarReceita);
 
 module.exports = routes;
