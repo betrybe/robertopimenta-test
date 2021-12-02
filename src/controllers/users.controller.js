@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
+const { promisify } = require('util');
 const users = require('../models/users');
 
 module.exports = {
@@ -25,7 +26,6 @@ module.exports = {
             return response.status(409).json({ message: 'Email already registered' });
         });
     },
-
     async login(request, response) {
         const errors = validationResult(request);
         const { email, password } = request.body;
@@ -45,5 +45,24 @@ module.exports = {
             return response.status(401).json({ message: 'Incorrect username or password' });
         });
     },
-
+    async createAdmin(request, response) {
+        const token = request.headers.authorization; let dados = '';
+        if (!token) {
+            return response.status(401).json({ message: 'missing auth token' });
+        }
+        try {
+            dados = await promisify(jwt.verify)(token, 'eb8ea89321237f7b4520');
+        } catch (err) {
+            return response.status(401).json({ message: 'jwt malformed' });
+        }
+        const { role } = dados;
+        if (role !== 'admin') {
+            return response.status(403).json({ message: 'Only admins can register new admins' });
+        }
+        const { name, email, password } = request.body;
+        const data = { name, email, password, role };
+        await users.create(data)
+        .then((user) => response.status(201).json({ user }))
+        .catch(() => response.status(400).json({ message: 'erro ao cadastrar admin' }));
+    },
 };
