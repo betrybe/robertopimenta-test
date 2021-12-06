@@ -142,4 +142,15 @@ describe('Receitas - Endpoints', () => {
                 });
         });
     });
+
+    describe('GET /images', () => {
+        it('Rota GET para uma imagem', done => {
+            chai.request(app)
+                .get('/images/123456789')
+                .end((err, response) => {
+                    response.should.have.status(200);
+                    done();
+                });
+        });
+    });
 });
