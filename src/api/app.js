@@ -12,7 +12,7 @@ const upload = require('../middlewares/upload');
 
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/Cookmaster', {
+mongoose.connect('mongodb://mongodb:27017/Cookmaster', {
   useUnifiedTopology: true,
 }, (err) => {
   if (err) {
