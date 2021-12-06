@@ -1,12 +1,15 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const app = require('../api/app')
+const recipes = require('../models/recipes')
+const users = require('../models/users')
 
 chai.use(chaiHttp);
 chai.should();
 
 describe('Receitas - Endpoints', () => {
     describe('POST /recipes', () => {
+
         var token = ''
         it('Rota POST para login com os campos válidos', done => {
             const user = {
@@ -127,10 +130,9 @@ describe('Receitas - Endpoints', () => {
         it('Rota GET para listar uma imagem', done => {
             const id = "";
             chai.request(app)
-                .get('/images/:id')
+                .get('/images/' + id)
                 .end((err, response) => {
-                    response.should.have.status(200);
-                    response.body.should.be.a('array')
+                    response.should.have.status(404);
                     done();
                 });
         });

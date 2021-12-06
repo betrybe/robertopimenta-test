@@ -7,7 +7,7 @@ const routes = require('./routes');
 
 const app = express();
 
-mongoose.connect('mongodb://mongodb:27017/Cookmaster', {
+mongoose.connect('mongodb://localhost:27017/Cookmaster', {
   useUnifiedTopology: true,
 }, (err) => {
   if (err) {
