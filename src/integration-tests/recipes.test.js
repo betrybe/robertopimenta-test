@@ -6,7 +6,7 @@ chai.use(chaiHttp);
 chai.should();
 
 describe('Receitas - Endpoints', () => {
-    describe('POST /recives', () => {
+    describe('POST /recipes', () => {
         var token = ''
         it('Rota POST para login com os campos válidos', done => {
             const user = {
@@ -30,7 +30,7 @@ describe('Receitas - Endpoints', () => {
                 preparation: "quebre o ovo, jogue na frigideira, adicione o sal"
             };
             chai.request(app)
-                .post('/recives')
+                .post('/recipes')
                 .send(recipe)
                 .end((err, response) => {
                     response.should.have.status(404);
@@ -44,7 +44,7 @@ describe('Receitas - Endpoints', () => {
                 preparation: "quebre o ovo, jogue na frigideira, adicione o sal"
             };
             chai.request(app)
-                .post('/recives')
+                .post('/recipes')
                 .send(recipe)
                 .end((err, response) => {
                     response.should.have.status(404);
@@ -58,7 +58,7 @@ describe('Receitas - Endpoints', () => {
                 ingredients: "ovo e sal"
             };
             chai.request(app)
-                .post('/recives')
+                .post('/recipes')
                 .send(recipe)
                 .end((err, response) => {
                     response.should.have.status(404);
@@ -73,7 +73,7 @@ describe('Receitas - Endpoints', () => {
                 preparation: "quebre o ovo, jogue na frigideira, adicione o sal"
             };
             chai.request(app)
-                .post('/recives')
+                .post('/recipes')
                 .send(recipe)
                 .end((err, response) => {
                     response.should.have.status(404);
@@ -89,7 +89,7 @@ describe('Receitas - Endpoints', () => {
                 preparation: "quebre o ovo, jogue na frigideira, adicione o sal"
             };
             chai.request(app)
-                .post('/recives')
+                .post('/recipes')
                 .set({ "Authorization": "959595959595" })
                 .send(recipe)
                 .end((err, response) => {
@@ -105,7 +105,7 @@ describe('Receitas - Endpoints', () => {
                 preparation: "quebre o ovo, jogue na frigideira, adicione o sal"
             };
             chai.request(app)
-                .post('/recives')
+                .post('/recipes')
                 .set("Authorization", { token })
                 .send(recipe)
                 .end((err, response) => {
