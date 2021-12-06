@@ -24,7 +24,13 @@ describe('Usuários', () => {
             { name: 'admin', email: 'root@email.com', password: 'admin', role: 'admin' },
             { name: 'Erick Jacquin', email: 'erickjacquin@gmail.com', password: '12345678', role: 'user' },
         ];
+        const recipes = [
+            { name: 'Receita 1', ingredients: 'Ingredientes Receita 1', preparation: 'Preparação Receita 1' },
+            { name: 'Receita 2', ingredients: 'Ingredientes Receita 2', preparation: 'Preparação Receita 2' },
+            { name: 'Receita 3', ingredients: 'Ingredientes Receita 3', preparation: 'Preparação Receita 3' },
+        ];
         await db.collection('users').insertMany(users);
+        await db.collection('recipes').insertMany(recipes);
     });
 
     after(async () => {
@@ -107,9 +113,26 @@ describe('Usuários', () => {
                     done();
                 })
         });
+        it('Cadastro com email repetido', done => {
+            chai.request(app)
+                .post('/users')
+                .send({
+                    "name": "Roberto Ayres",
+                    "email": "roberto@email.com",
+                    "password": "123456789"
+                })
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.should.have.status(409);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message');
+                    res.body.should.have.property('message').eql('Email already registered');
+                    done();
+                })
+        });
     });
 
-    describe('LOGIN', () => {
+    describe('/POST API LOGIN', () => {
         it('Login ok', done => {
             chai.request(app)
                 .post('/login')
@@ -171,6 +194,25 @@ describe('Usuários', () => {
                     res.body.should.be.a('object');
                     res.body.should.have.property('message');
                     res.body.should.have.property('message').eql('missing auth token');
+                    done();
+                })
+        });
+    });
+
+    describe('/POST API RECIPES', () => {
+        it('Faltando nome', done => {
+            chai.request(app)
+                .post('/recipes')
+                .send({
+                    "ingredients": "teste update",
+                    "preparation": "teste update"
+                })
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message');
+                    res.body.should.have.property('message').eql('Invalid entries. Try again.');
                     done();
                 })
         });
