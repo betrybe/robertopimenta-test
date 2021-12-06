@@ -1,6 +1,7 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const app = require('../api/app');
+const server = require('../api/server');
 
 chai.use(chaiHttp);
 chai.should();
@@ -85,6 +86,20 @@ describe('Receitas - Endpoints', () => {
                 .send(recipe)
                 .end((err, response) => {
                     response.should.have.status(400);
+                    done();
+                });
+        });
+        it('Rota POST para cadastrar receita com o campo preparation vazio', done => {
+            const recipe = {
+                name: "receita ovo frito",
+                ingredients: "ovo e sal",
+                preparation: "quebre o ovo, jogue na frigideira, adicione o sal"
+            };
+            chai.request(server)
+                .post('/recipes')
+                .send(recipe)
+                .end((err, response) => {
+                    response.should.have.status(200);
                     done();
                 });
         });
