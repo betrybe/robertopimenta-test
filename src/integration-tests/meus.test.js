@@ -47,6 +47,7 @@ describe('Receitas - Endpoints', () => {
                 });
         });
     });
+
     describe('POST /users', () => {
         it('Rota POST para cadastrar usuário sem o campo NAME', done => {
             const user = {
@@ -55,6 +56,21 @@ describe('Receitas - Endpoints', () => {
             };
             chai.request(app)
                 .post('/users')
+                .send(user)
+                .end((err, response) => {
+                    response.should.have.status(400);
+                    done();
+                });
+        });
+    });
+
+    describe('POST /login', () => {
+        it('Rota POST para login de usuário sem o campo email', done => {
+            const user = {
+                "password": "12345678"
+            };
+            chai.request(app)
+                .post('/login')
                 .send(user)
                 .end((err, response) => {
                     response.should.have.status(400);
