@@ -73,7 +73,19 @@ describe('Receitas - Endpoints', () => {
                 .post('/login')
                 .send(user)
                 .end((err, response) => {
-                    response.should.have.status(400);
+                    response.should.have.status(401);
+                    done();
+                });
+        });
+        it('Rota POST para login de usuário sem o campo pass', done => {
+            const user = {
+                "email": "roberto@email.com"
+            };
+            chai.request(app)
+                .post('/login')
+                .send(user)
+                .end((err, response) => {
+                    response.should.have.status(401);
                     done();
                 });
         });
