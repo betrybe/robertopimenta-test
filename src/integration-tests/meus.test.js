@@ -51,8 +51,34 @@ describe('Receitas - Endpoints', () => {
     describe('POST /users', () => {
         it('Rota POST para cadastrar usuário sem o campo NAME', done => {
             const user = {
-                "email": "robeeppppjsssjjjeh@email.com",
+                "email": "roberto@email.com",
                 "password": "12345678"
+            };
+            chai.request(app)
+                .post('/users')
+                .send(user)
+                .end((err, response) => {
+                    response.should.have.status(400);
+                    done();
+                });
+        });
+        it('Rota POST para cadastrar usuário sem o campo EMAIL', done => {
+            const user = {
+                "name": "Roberto",
+                "password": "12345678"
+            };
+            chai.request(app)
+                .post('/users')
+                .send(user)
+                .end((err, response) => {
+                    response.should.have.status(400);
+                    done();
+                });
+        });
+        it('Rota POST para cadastrar usuário sem o campo PASSWORD', done => {
+            const user = {
+                "name": "Roberto",
+                "email": "roberto@email.com"
             };
             chai.request(app)
                 .post('/users')
@@ -86,6 +112,32 @@ describe('Receitas - Endpoints', () => {
                 .send(user)
                 .end((err, response) => {
                     response.should.have.status(401);
+                    done();
+                });
+        });
+        it('Rota POST para login de usuário com email inválido', done => {
+            const user = {
+                "email": "roberto.com",
+                "password": "12345678"
+            };
+            chai.request(app)
+                .post('/login')
+                .send(user)
+                .end((err, response) => {
+                    response.should.have.status(401);
+                    done();
+                });
+        });
+        it('Rota POST para login de usuário com dados válidos', done => {
+            const user = {
+                "email": "root@email.com",
+                "password": "admin"
+            };
+            chai.request(app)
+                .post('/login')
+                .send(user)
+                .end((err, response) => {
+                    response.should.have.status(200);
                     done();
                 });
         });
