@@ -123,6 +123,17 @@ describe('Receitas - Endpoints', () => {
                     done();
                 });
         });
+
+        it('Rota GET para listar uma imagem', done => {
+            const id = "";
+            chai.request(app)
+                .get('/images/:id')
+                .end((err, response) => {
+                    response.should.have.status(200);
+                    response.body.should.be.a('array')
+                    done();
+                });
+        });
     });
 });
 
@@ -143,5 +154,35 @@ describe('Usuários - Endpoints', () => {
                     done();
                 });
         });
+
+        it('Rota POST para novo usuário sem o campo NAME', done => {
+            const user = {
+                email: "robertopimenta@email.com",
+                password: "12345678"
+            };
+            chai.request(app)
+                .post('/users')
+                .send(user)
+                .end((err, response) => {
+                    response.should.have.status(400);
+                    done();
+                });
+        });
+
+        it('Rota POST para novo usuário com o campo NAME vazio', done => {
+            const user = {
+                name="",
+                email: "robertopimenta@email.com",
+                password: "12345678"
+            };
+            chai.request(app)
+                .post('/users')
+                .send(user)
+                .end((err, response) => {
+                    response.should.have.status(400);
+                    done();
+                });
+        });
+
     });
 });
