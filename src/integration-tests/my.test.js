@@ -70,7 +70,7 @@ describe('RECEITAS', () => {
                     done();
                 });
         });
-        
+
     });
 
 
