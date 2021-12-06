@@ -125,3 +125,23 @@ describe('Receitas - Endpoints', () => {
         });
     });
 });
+
+describe('Usuários - Endpoints', () => {
+    describe('POST /users', async () => {
+
+        it('Rota POST para novo usuário com dados válidos', done => {
+            const user = {
+                name: "Roberto Pimenta",
+                email: "robertopimenta@email.com",
+                password: "12345678"
+            };
+            chai.request(app)
+                .post('/users')
+                .send(user)
+                .end((err, response) => {
+                    response.should.have.status(201);
+                    done();
+                });
+        });
+    });
+});
