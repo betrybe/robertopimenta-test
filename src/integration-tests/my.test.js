@@ -43,7 +43,73 @@ describe('RECEITAS', () => {
         });
     });
 
-   
+    describe('/POST API USERS', () => {
+
+        it('Faltando nome', done => {
+            chai.request(app)
+                .post('/users')
+                .send({
+                    "email": "roberto@email.com",
+                    "password": "12345678"
+                })
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message');
+                    res.body.should.have.property('message').eql('Invalid entries. Try again.');
+                    done();
+                })
+        });
+        it('Faltando email', done => {
+            chai.request(app)
+                .post('/users')
+                .send({
+                    "name": "Roberto Pimenta",
+                    "password": "12345678"
+                })
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message');
+                    res.body.should.have.property('message').eql('Invalid entries. Try again.');
+                    done();
+                })
+        });
+        it('Faltando password', done => {
+            chai.request(app)
+                .post('/users')
+                .send({
+                    "name": "Roberto Ayres",
+                    "email": "roberto@email.com",
+                })
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message');
+                    res.body.should.have.property('message').eql('Invalid entries. Try again.');
+                    done();
+                })
+        });
+        it('Tudo OK', done => {
+            chai.request(app)
+                .post('/users')
+                .send({
+                    "name": "Roberto Ayres",
+                    "email": "roberto@email.com",
+                    "password": "12345678"
+                })
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.should.have.status(201);
+                    done();
+                })
+        });
+    });
+
+
 
 
 });
