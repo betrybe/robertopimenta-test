@@ -7,6 +7,15 @@ chai.use(chaiHttp);
 chai.should();
 
 describe('Receitas - Endpoints', () => {
+    describe('Servidor Rodando', () => {
+        it('check app status', function (done) {
+            chai.request(server).get('/').end((err, res) => {
+                should.not.exist(err);
+                res.should.have.status(200);
+                done();
+            })
+        });
+    });
     describe('POST /recipes', () => {
         it('Rota POST para cadastrar receita sem o campo NAME', done => {
             const recipe = {
