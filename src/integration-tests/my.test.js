@@ -9,7 +9,7 @@ should = chai.should();
 
 const mongoDbUrl = 'mongodb://mongodb:27017/Cookmaster';
 
-describe('RECEITAS', () => {
+describe('Usuários', () => {
     let connection;
     let db;
 
@@ -44,7 +44,6 @@ describe('RECEITAS', () => {
     });
 
     describe('/POST API USERS', () => {
-
         it('Faltando nome', done => {
             chai.request(app)
                 .post('/users')
@@ -93,23 +92,59 @@ describe('RECEITAS', () => {
                     done();
                 })
         });
-        it('Tudo OK', done => {
+    });
+
+    describe('/POST API USERS ADMIN', () => {
+        it('Faltando nome', done => {
             chai.request(app)
-                .post('/users')
+                .post('/users/admin')
                 .send({
-                    "name": "Roberto Ayres",
                     "email": "roberto@email.com",
                     "password": "12345678"
                 })
                 .end((err, res) => {
                     should.not.exist(err);
-                    res.should.have.status(201);
+                    res.should.have.status(401);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message');
+                    res.body.should.have.property('message').eql('missing auth token');
                     done();
                 })
         });
+        it('Faltando email', done => {
+            chai.request(app)
+                .post('/users/admin')
+                .send({
+                    "name": "Roberto Pimenta",
+                    "password": "12345678"
+                })
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.should.have.status(401);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message');
+                    res.body.should.have.property('message').eql('missing auth token');
+                    done();
+                })
+        });
+        it('Faltando password', done => {
+            chai.request(app)
+                .post('/users/admin')
+                .send({
+                    "name": "Roberto Ayres",
+                    "email": "roberto@email.com",
+                })
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.should.have.status(401);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message');
+                    res.body.should.have.property('message').eql('missing auth token');
+                    done();
+                })
+        });
+        
     });
-
-
 
 
 });
