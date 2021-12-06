@@ -33,7 +33,7 @@ describe('Receitas - Endpoints', () => {
                 .post('/recipes')
                 .send(recipe)
                 .end((err, response) => {
-                    response.should.have.status(404);
+                    response.should.have.status(400);
                     done();
                 });
         });
@@ -47,7 +47,7 @@ describe('Receitas - Endpoints', () => {
                 .post('/recipes')
                 .send(recipe)
                 .end((err, response) => {
-                    response.should.have.status(404);
+                    response.should.have.status(400);
                     done();
                 });
         });
@@ -61,7 +61,7 @@ describe('Receitas - Endpoints', () => {
                 .post('/recipes')
                 .send(recipe)
                 .end((err, response) => {
-                    response.should.have.status(404);
+                    response.should.have.status(400);
                     done();
                 });
         });
@@ -76,7 +76,7 @@ describe('Receitas - Endpoints', () => {
                 .post('/recipes')
                 .send(recipe)
                 .end((err, response) => {
-                    response.should.have.status(404);
+                    response.should.have.status(400);
                     done();
                 });
         });
@@ -93,7 +93,7 @@ describe('Receitas - Endpoints', () => {
                 .set({ "Authorization": "959595959595" })
                 .send(recipe)
                 .end((err, response) => {
-                    response.should.have.status(404);
+                    response.should.have.status(400);
                     done();
                 });
         });
@@ -171,7 +171,7 @@ describe('Usuários - Endpoints', () => {
 
         it('Rota POST para novo usuário com o campo NAME vazio', done => {
             const user = {
-                name="",
+                name: "",
                 email: "robertopimenta@email.com",
                 password: "12345678"
             };
