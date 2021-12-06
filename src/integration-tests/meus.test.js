@@ -46,6 +46,48 @@ describe('Receitas - Endpoints', () => {
                     done();
                 });
         });
+        it('Rota POST para cadastrar receita com o campo NAME vazio', done => {
+            const recipe = {
+                name: "",
+                ingredients: "ovo e sal",
+                preparation: "quebre o ovo, jogue na frigideira, adicione o sal"
+            };
+            chai.request(app)
+                .post('/recipes')
+                .send(recipe)
+                .end((err, response) => {
+                    response.should.have.status(400);
+                    done();
+                });
+        });
+        it('Rota POST para cadastrar receita com o campo INGREDIENTS vazio', done => {
+            const recipe = {
+                name: "receita ovo frito",
+                ingredients: "",
+                preparation: "quebre o ovo, jogue na frigideira, adicione o sal"
+            };
+            chai.request(app)
+                .post('/recipes')
+                .send(recipe)
+                .end((err, response) => {
+                    response.should.have.status(400);
+                    done();
+                });
+        });
+        it('Rota POST para cadastrar receita com o campo preparation vazio', done => {
+            const recipe = {
+                name: "receita ovo frito",
+                ingredients: "ovo e sal",
+                preparation: ""
+            };
+            chai.request(app)
+                .post('/recipes')
+                .send(recipe)
+                .end((err, response) => {
+                    response.should.have.status(400);
+                    done();
+                });
+        });
     });
 
     describe('POST /users', () => {
@@ -78,7 +120,49 @@ describe('Receitas - Endpoints', () => {
         it('Rota POST para cadastrar usuário sem o campo PASSWORD', done => {
             const user = {
                 "name": "Roberto",
-                "email": "roberto@email.com"
+                "email": "roberto@email"
+            };
+            chai.request(app)
+                .post('/users')
+                .send(user)
+                .end((err, response) => {
+                    response.should.have.status(400);
+                    done();
+                });
+        });
+        it('Rota POST para cadastrar usuário com campo NAME vazio', done => {
+            const user = {
+                "name": "",
+                "email": "roberto@email.com",
+                "password": "12345678"
+            };
+            chai.request(app)
+                .post('/users')
+                .send(user)
+                .end((err, response) => {
+                    response.should.have.status(400);
+                    done();
+                });
+        });
+        it('Rota POST para cadastrar usuário com campo EMAIL vazio', done => {
+            const user = {
+                "name": "Roberto",
+                "email": "",
+                "password": "12345678"
+            };
+            chai.request(app)
+                .post('/users')
+                .send(user)
+                .end((err, response) => {
+                    response.should.have.status(400);
+                    done();
+                });
+        });
+        it('Rota POST para cadastrar usuário com campo PASSWORD vazio', done => {
+            const user = {
+                "name": "Roberto",
+                "email": "roberto@email.com",
+                "password": ""
             };
             chai.request(app)
                 .post('/users')
