@@ -92,6 +92,37 @@ describe('Usuários', () => {
                     done();
                 })
         });
+        it('Cadastro OK', done => {
+            chai.request(app)
+                .post('/users')
+                .send({
+                    "name": "Roberto Ayres",
+                    "email": "roberto@email.com",
+                    "password": "123456789"
+                })
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.should.have.status(201);
+                    res.body.should.be.a('object');
+                    done();
+                })
+        });
+    });
+
+    describe('LOGIN', () => {
+        it('Login ok', done => {
+            chai.request(app)
+                .post('/login')
+                .send({
+                    "email": "roberto@email.com",
+                    "password": "123456789"
+                })
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.should.have.status(200);
+                    done();
+                })
+        });
     });
 
     describe('/POST API USERS ADMIN', () => {
@@ -143,7 +174,6 @@ describe('Usuários', () => {
                     done();
                 })
         });
-        
     });
 
 
