@@ -1,6 +1,5 @@
 const { validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
-const mongoose = require('mongoose');
 const { promisify } = require('util');
 const users = require('../models/users');
 
