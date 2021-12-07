@@ -204,8 +204,8 @@ describe('Usuários', () => {
             chai.request(app)
                 .post('/recipes')
                 .send({
-                    "ingredients": "teste update",
-                    "preparation": "teste update"
+                    "ingredients": "Ingredients da receita",
+                    "preparation": "Preparation da receita"
                 })
                 .end((err, res) => {
                     should.not.exist(err);
@@ -213,6 +213,60 @@ describe('Usuários', () => {
                     res.body.should.be.a('object');
                     res.body.should.have.property('message');
                     res.body.should.have.property('message').eql('Invalid entries. Try again.');
+                    done();
+                })
+        });
+        it('Faltando ingredients', done => {
+            chai.request(app)
+                .post('/recipes')
+                .send({
+                    "name": "Name da receita",
+                    "preparation": "Preparation da receita"
+                })
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message');
+                    res.body.should.have.property('message').eql('Invalid entries. Try again.');
+                    done();
+                })
+        });
+        it('Faltando preparation', done => {
+            chai.request(app)
+                .post('/recipes')
+                .send({
+                    "name": "Name da receita",
+                    "ingredients": "Ingredients da receita"
+                })
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message');
+                    res.body.should.have.property('message').eql('Invalid entries. Try again.');
+                    done();
+                })
+        });
+        it('Listando receitas', done => {
+            chai.request(app)
+                .get('/recipes')
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.should.have.status(200);
+                    res.body.should.be.a('array');
+                    done();
+                })
+        });
+    });
+
+    describe('/POST API IMAGES', () => {
+        it('Acessando imagem', done => {
+            chai.request(app)
+                .get('/images/123456789')
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.should.have.status(200);
                     done();
                 })
         });
