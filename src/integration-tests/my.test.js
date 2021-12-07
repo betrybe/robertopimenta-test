@@ -7,6 +7,9 @@ chai.use(chaiHttp);
 chai.should();
 should = chai.should();
 
+const user = require('../models/users');
+const recipes = require('../models/recipes');
+
 const mongoDbUrl = 'mongodb://mongodb:27017/Cookmaster';
 
 describe('Usuários', () => {
@@ -319,10 +322,11 @@ describe('Usuários', () => {
                     email: "roberto@email.com",
                     password: "123456789"
                 })
-                .then((res) => {
-                    console.log('res')
+                .end(function (err, res) {
+                    if (err) done(err);
+                    jwtToken = res.body.token;
                     done();
-                })
+                });
         });
 
         it('Acessando imagem', done => {
@@ -333,6 +337,14 @@ describe('Usuários', () => {
                     res.should.have.status(200);
                     done();
                 })
+        });
+    });
+
+    describe('some test block', function () {
+        it('should do something', async function () { // notice async and no done
+            const users = await user.find()
+
+            // expect users.to (...)
         });
     });
 
