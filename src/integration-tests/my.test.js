@@ -248,6 +248,7 @@ describe('Usuários', () => {
                     done();
                 })
         });
+
         it('Listando receitas', done => {
             chai.request(app)
                 .get('/recipes')
@@ -260,7 +261,18 @@ describe('Usuários', () => {
         });
     });
 
-    describe('/POST API IMAGES', () => {
+    describe('/POST API RECEITA OK', () => {
+        before((done) => {
+            chai.request(app)
+                .post('/login', {
+                    "email": "roberto@email.com",
+                    "password": "123456789"
+                })
+                .then((res) => {
+                    done();
+                });
+        });
+
         it('Acessando imagem', done => {
             chai.request(app)
                 .get('/images/123456789')
