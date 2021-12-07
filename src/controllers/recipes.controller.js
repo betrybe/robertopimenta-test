@@ -1,228 +1,98 @@
-const recipes = require('../models/recipes')
-const jwt = require('jsonwebtoken')
-const { promisify } = require('util')
+const jwt = require('jsonwebtoken');
+const { promisify } = require('util');
+
+const recipes = require('../models/recipes');
 
 module.exports = {
     index(request, response) {
         response.json({
-            mensagem: 'Controler do recipes'
-        })
+            mensagem: 'Controler do recipes',
+        });
     },
-
-    // CADASTRAR RECEITA
     async create(request, response) {
-        const { name, ingredients, preparation } = request.body
-
-        if (!name) {
-            return response.status(400).json({
-                message: 'Invalid entries. Try again.'
-            })
-        } else {
-            if (!ingredients) {
-                return response.status(400).json({
-                    message: 'Invalid entries. Try again.'
-                })
-            } else {
-                if (!preparation) {
-                    return response.status(400).json({
-                        message: 'Invalid entries. Try again.'
-                    })
-                } else {
-                    const token = request.headers.authorization
-                    //console.log(token)
-                    if (!token) {
-                        return response.status(400).json({
-                            message: 'Necessário realizar login'
-                        })
-                    } else {
-                        try {
-                            var privateKey = 'eb8ea89321237f7b4520'
-                            var decode = await promisify(jwt.verify)(token, privateKey)
-                        } catch (err) {
-                            return response.status(401).json({
-                                message: 'jwt malformed'
-                            })
-                        }
-                        var userId = decode.id
-                        var image = ''
-                        const data = { name, ingredients, preparation, userId, image }
-                        const recipe = await recipes.create(data)
-                        return response.status(201).json({
-                            recipe
-                        })
-                    }
-                }
-            }
+        const { name, ingredients, preparation } = request.body;
+        const token = request.headers.authorization;
+        if (!name || !ingredients || !preparation || !token) {
+            return response.status(400).json({ message: 'Invalid entries. Try again.' });
         }
+        await promisify(jwt.verify)(token, 'eb8ea89321237f7b4520').then((decode) => {
+            const { id } = decode;
+            const image = '';
+            const userId = id;
+            const data = { name, ingredients, preparation, userId, image };
+            recipes.create(data).then((recipe) => response.status(201).json({ recipe }));
+        }).catch(() => response.status(401).json({ message: 'jwt malformed' }));
     },
-
-    // LISTAR TODAS AS RECEITAS
     async listagem(request, response) {
-        await recipes.find().then((recipes) => {
-            return response.status(200).json(
-                recipes
-            )
-        }).catch((err) => {
-            return response.status(400).json({
-                err
-            })
-        })
-
+        await recipes.find().then((receitas) => response.status(200).json(receitas))
+            .catch((err) => response.status(400).json(err));
     },
-
-    // LISTAR RECEITA PELO ID
     async listarId(request, response) {
-        const id = request.params.id
-        //console.log(id)
         try {
-            const receita = await recipes.findById(id)
+            const receita = await recipes.findById(request.params.id);
             return response.status(200).json(
-                receita
-            )
+                receita,
+            );
         } catch (err) {
             return response.status(404).json({
-                message: 'recipe not found'
-            })
+                message: 'recipe not found',
+            });
         }
     },
-
-    // EDITAR RECEITA
     async editarReceita(request, response) {
-        // Verifico token
-        const token = request.headers.authorization
-        if (!token) {
-            return response.status(401).json({
-                message: 'missing auth token'
-            })
-        } else {
-            try {
-                var privateKey = 'eb8ea89321237f7b4520'
-                var dados = await promisify(jwt.verify)(token, privateKey)
-            } catch (err) {
-                return response.status(401).json({
-                    message: 'jwt malformed'
-                })
-            }
-        }
-
-        // Procuro a receita
-        const id = request.params.id
+        const token = request.headers.authorization;
+        const { name, ingredients, preparation } = request.body;
+        let dados = ''; let receita = ''; let userId = ''; let receitaUpdate = '';
+        if (!token) { return response.status(401).json({ message: 'missing auth token' }); }
         try {
-            var receita = await recipes.findById(id)
+            dados = await promisify(jwt.verify)(token, 'eb8ea89321237f7b4520');
         } catch (err) {
-            return response.status(404).json({
-                message: 'recipe not found'
-            })
+            return response.status(401).json({ message: 'jwt malformed' });
         }
-
-        // verifico id do usuário logado com o userId da receita ou role admin
+        receita = await recipes.findById(request.params.id);
         if (dados.id === receita.userId || dados.role === 'admin') {
-            var userId = receita.userId
-            const { name, ingredients, preparation } = request.body
-            const update = { userId, name, ingredients, preparation }
-            var receitaUpdate = await recipes.findOneAndUpdate(id, update, { new: true })
-            return response.status(200).json(
-                receitaUpdate
-            )
-        } else {
-            return response.status(401).json({
-                message: 'error user'
-            })
+            userId = receita.userId;
+            const update = { userId, name, ingredients, preparation };
+            receitaUpdate = await recipes.findOneAndUpdate(request.params.id, update, {
+                new: true,
+            });
+            return response.status(200).json(receitaUpdate);
         }
     },
-
-    // DELETAR RECEITA
     async deletarReceita(request, response) {
-        // Verifico token
-        const token = request.headers.authorization
-        if (!token) {
-            return response.status(401).json({
-                message: 'missing auth token'
-            })
-        } else {
-            try {
-                var privateKey = 'eb8ea89321237f7b4520'
-                var dados = await promisify(jwt.verify)(token, privateKey)
-            } catch (err) {
-                return response.status(401).json({
-                    message: 'jwt malformed'
-                })
-            }
-        }
-
-        // Procuro receita
-        const id = request.params.id
+        const token = request.headers.authorization;
+        let dados = ''; let receita = '';
+        if (!token) { return response.status(401).json({ message: 'missing auth token' }); }
         try {
-            var receita = await recipes.findById(id)
+            dados = await promisify(jwt.verify)(token, 'eb8ea89321237f7b4520');
         } catch (err) {
-            return response.status(404).json({
-                message: 'recipe not found'
-            })
+            return response.status(401).json({ message: 'jwt malformed' });
         }
-
-        // verifico id do usuário logado com o userId da receita ou role admin
+        receita = await recipes.findById(request.params.id);
         if (dados.id === receita.userId || dados.role === 'admin') {
-            await recipes.findOneAndDelete(id).then(() => {
-                return response.status(204).json()
-            }).catch((err) => {
-                return response.status(400).json({
-                    err
-                })
-            })
-        } else {
-            return response.status(401).json({
-                message: 'error user'
-            })
+            await recipes.findOneAndDelete(request.params.id)
+                .then(() => response.status(204).json())
+                .catch(() => response.status(204).json());
         }
     },
-
-    // ADICIONAR IMAGEM NA RECEITA
     async imagemReceita(request, response) {
-        // Verifico token
-        const token = request.headers.authorization
-        if (!token) {
-            return response.status(401).json({
-                message: 'missing auth token'
-            })
-        } else {
-            try {
-                var privateKey = 'eb8ea89321237f7b4520'
-                var dados = await promisify(jwt.verify)(token, privateKey)
-            } catch (err) {
-                return response.status(401).json({
-                    message: 'jwt malformed'
-                })
-            }
-        }
-
-        // Procuro a receita
-        const id = request.params.id
+        const token = request.headers.authorization; let dados = ''; let receita = '';
+        if (!token) { return response.status(401).json({ message: 'missing auth token' }); }
         try {
-            var receita = await recipes.findById(id)
+            dados = await promisify(jwt.verify)(token, 'eb8ea89321237f7b4520');
         } catch (err) {
-            return response.status(404).json({
-                message: 'recipe not found'
-            })
+            return response.status(401).json({ message: 'jwt malformed' });
         }
-
-        // verifico id do usuário logado com o userId da receita ou role admin
+        receita = await recipes.findById(request.params.id);
         if (dados.id === receita.userId || dados.role === 'admin') {
-            var userId = receita.userId
-            var update = { userId, image: 'localhost:3000/src/uploads/' + id + '.jpeg' }
-            await recipes.findOneAndUpdate(id, update, { new: true }).then((receitaUpdate) => {
-                return response.status(200).json(
-                    receitaUpdate
-                )
-            }).catch((err) => {
-                return response.status(400).json({
-                    err
-                })
-            })
-        } else {
-            return response.status(401).json({
-                message: 'error user'
-            })
+            const { userId } = receita;
+            const update = { 
+                userId, 
+                image: `localhost:3000/src/uploads/${request.params.id}.jpeg`,
+            };
+            await recipes.findOneAndUpdate(request.params.id, update, { new: true })
+                .then((receitaUpdate) => response.status(200).json(receitaUpdate))
+                .catch((err) => response.status(400).json({ err }));
         }
-    }
-
-}
+    },
+};
