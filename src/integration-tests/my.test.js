@@ -9,6 +9,7 @@ should = chai.should();
 
 const user = require('../models/users');
 const recipes = require('../models/recipes');
+const assert = require('assert');
 
 const mongoDbUrl = 'mongodb://mongodb:27017/Cookmaster';
 
@@ -340,11 +341,27 @@ describe('Usuários', () => {
         });
     });
 
-    describe('some test block', function () {
-        it('should do something', async function () { // notice async and no done
-            const users = await user.find()
+    describe('Creating documents in MongoDB', () => {
+        it('Creates a New User', (done) => {
+            const newUser = new user({ name: "Roberto", email: "rob@email.com", password: "12345678" });
+            newUser.save() // returns a promise after some time
+                .then(() => {
+                    //if the newUser is saved in db and it is not new
+                    assert(!newUser.isNew);
+                    done();
+                });
+        });
+    });
 
-            // expect users.to (...)
+    describe('Creating documents in MongoDB', () => {
+        it('Creates a New User', (done) => {
+            const newRecipe = new recipes({ name: "Roberto", ingredients: "rob@email.com", preparation: "12345678" });
+            newRecipe.save() // returns a promise after some time
+                .then(() => {
+                    //if the newUser is saved in db and it is not new
+                    assert(!newRecipe.isNew);
+                    done();
+                });
         });
     });
 
