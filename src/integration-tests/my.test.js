@@ -216,11 +216,45 @@ describe('Usuários', () => {
                     done();
                 })
         });
+        it('Faltando nome', done => {
+            chai.request(app)
+                .post('/recipes')
+                .send({
+                    "name": "",
+                    "ingredients": "Ingredients da receita",
+                    "preparation": "Preparation da receita"
+                })
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message');
+                    res.body.should.have.property('message').eql('Invalid entries. Try again.');
+                    done();
+                })
+        });
         it('Faltando ingredients', done => {
             chai.request(app)
                 .post('/recipes')
                 .send({
                     "name": "Name da receita",
+                    "preparation": "Preparation da receita"
+                })
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message');
+                    res.body.should.have.property('message').eql('Invalid entries. Try again.');
+                    done();
+                })
+        });
+        it('Faltando ingredients', done => {
+            chai.request(app)
+                .post('/recipes')
+                .send({
+                    "name": "Name da receita",
+                    "ingredients": "",
                     "preparation": "Preparation da receita"
                 })
                 .end((err, res) => {
@@ -248,6 +282,23 @@ describe('Usuários', () => {
                     done();
                 })
         });
+        it('Faltando preparation', done => {
+            chai.request(app)
+                .post('/recipes')
+                .send({
+                    "name": "Name da receita",
+                    "ingredients": "Ingredients da receita",
+                    "preparation": ""
+                })
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message');
+                    res.body.should.have.property('message').eql('Invalid entries. Try again.');
+                    done();
+                })
+        });
 
         it('Listando receitas', done => {
             chai.request(app)
@@ -265,12 +316,13 @@ describe('Usuários', () => {
         before((done) => {
             chai.request(app)
                 .post('/login', {
-                    "email": "roberto@email.com",
-                    "password": "123456789"
+                    email: "roberto@email.com",
+                    password: "123456789"
                 })
                 .then((res) => {
+                    console.log('res')
                     done();
-                });
+                })
         });
 
         it('Acessando imagem', done => {
